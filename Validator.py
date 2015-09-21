@@ -1,4 +1,7 @@
+from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
+from Crypto.Hash import MD5
+import Crypto.Util.number
 import argparse
 import datetime
 import os
@@ -15,6 +18,8 @@ args = parser.parse_args()
 location = os.getcwd()
 date = None
 
+key = RSA.generate(2048)
+
 if args.location != None:
 	location = args.location
 if args.day == None:
@@ -25,25 +30,23 @@ else:
 	date = date.strptime(args.day, "%d/%m/%Y")
 	date = date.strftime("%d/%m/%Y")
 
-key = RSA.generate(2048)
-
 if args.generate == False:
 
 	f = open(location + "\Software License.txt", "r")
 
 	read = f.read()
 	temp = key.decrypt(read)
-	print "VALUE: " + temp
-
 
 else:
 
-	message = str(date)
+	message = date
+	input_File = open(location + "\Date.txt", "r+")
+	input_File.write(message + '\n')
 
-	e_message = key.encrypt(message,32)
+	hashMD5 = MD5.new()
+	hashMD5.update(message)
+	input_File.write(hashMD5.hexdigest())
 
-	f = open(location + "\Software License.txt", "w")
 
-	f.write(e_message)
 
-	f.close()
+	output_File = open(location + "\Software License.txt", "w")
