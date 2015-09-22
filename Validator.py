@@ -22,7 +22,7 @@ location = os.getcwd()
 date = None
 
 if args.key == True:
-	print "Creating Key..."
+	print "Creating Key . . ."
 	rand = Random.new().read
 	key = RSA.generate(1024,rand)
 	with open("PrivateKey.PEM", 'wb') as s:
@@ -30,7 +30,7 @@ if args.key == True:
 
 	with open("PublicKey.PEM", "wb") as s:
 		s.write(key.publickey().exportKey('PEM'))
-
+	print "Key Created!"
 
 if args.generate == True:
 	print "Generating License . . ."
@@ -48,6 +48,7 @@ if args.generate == True:
 
 	DigitalSignature = open(location + "\DigitalSignature.pkl", "wb")
 	cPickle.dump(signature, DigitalSignature, protocol=cPickle.HIGHEST_PROTOCOL)
+	print "License Generated!"
 
 if args.test == True:
 	print "Testing . . ."
@@ -63,12 +64,12 @@ if args.test == True:
 	if date.year >= dateNow.year and  date.month >= dateNow.month and date.year >= dateNow.year:
 		print "Key Is Valid!"
 	else:
-		sys.exit("Key Is No Longer Valid")
+		sys.exit("Key Has Expired")
 	
 	try:
 		signature = cPickle.load(DigitalSignature)
 	except:
-		sys.exit("Digital Signature Failed To Load")
+		sys.exit("Digital Signature Is Invalid")
 	key = RSA.importKey(open('PublicKey.PEM').read())
 	h = SHA256.new(SL)
 	verifier = PKCS1_v1_5.new(key)
@@ -76,5 +77,5 @@ if args.test == True:
 	   print "Accessing Private Network"
 	   print "Download Complete!"
 	else:
-	    print "The Software License Does Not Match The Digital Signature"
+	    print "The Software License Has Been Changed"
 
