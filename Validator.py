@@ -33,7 +33,7 @@ if args.key == True:
 
 
 if args.generate == True:
-	print "Generating . . ."
+	print "Generating License . . ."
 
 	date = datetime.datetime.now() + datetime.timedelta(days=31)
 	date = date.strftime("%d/%m/%Y")
@@ -63,11 +63,12 @@ if args.test == True:
 	if date.year >= dateNow.year and  date.month >= dateNow.month and date.year >= dateNow.year:
 		print "Key Is Valid!"
 	else:
-		sys.exit("Key is Invalid")
+		sys.exit("Key Is No Longer Valid")
 	
-
-	signature = cPickle.load(DigitalSignature)
-
+	try:
+		signature = cPickle.load(DigitalSignature)
+	except:
+		sys.exit("Digital Signature Failed To Load")
 	key = RSA.importKey(open('PublicKey.PEM').read())
 	h = SHA256.new(SL)
 	verifier = PKCS1_v1_5.new(key)
@@ -75,5 +76,5 @@ if args.test == True:
 	   print "Accessing Private Network"
 	   print "Download Complete!"
 	else:
-	    print "The Files Have Been Corrupted"
+	    print "The Software License Does Not Match The Digital Signature"
 
